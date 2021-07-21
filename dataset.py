@@ -3,6 +3,13 @@ import os
 import numpy as np
 import cv2
 import random
+import torch
+import torchvision
+from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
 
 
 def read_dir(root):
@@ -98,3 +105,15 @@ def generate_data(save_dir, paths, indices, ann):
 
     print(f"{len(cann)} examples generated ")
 
+
+
+class LicensePlateDataset(Dataset):
+    """Cropped Images with Transformed annotations and Plate text"""
+
+    def __init__(self, root, df, transform = None):
+        """
+        Args:
+            root (str): Path of directory
+            df (DataFrame): Pandas DataFrame
+        """
+        
