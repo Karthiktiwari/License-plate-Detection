@@ -97,5 +97,8 @@ def generate_data(save_dir, paths, indices, ann):
 
     print(f"{len(cann)} examples generated ")
 
+root = r"C:\Users\win10\Downloads\UFPR-ALPR\UFPR-ALPR dataset\Train data"
+savedir = r"C:\Users\win10\Documents\images" 
+
 paths, indices, ann = read_dir(root = root)         #Read raw data
 generate_data(save_dir = savedir, paths = paths, indices = indices, ann = ann)          #Generate cropped images, transformed annotations and vectorized plate text

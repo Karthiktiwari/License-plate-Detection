@@ -1,11 +1,9 @@
+from torch.utils.data import Dataset
 import torch
-import torchvision
-from torch.utils.data import Dataset, DataLoader
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
 from PIL import Image
-
+import numpy as np
+import pandas as pd
+import os
 
 class LicensePlateDataset(Dataset):
     """Cropped Images with Transformed annotations and Plate text"""
@@ -16,9 +14,8 @@ class LicensePlateDataset(Dataset):
             root (str): Path of directory
             df (DataFrame): Pandas DataFrame
         """
-        self.root = root
         self.df = df 
-
+        self.root = root
         self.paths = df['paths']
         self.bboxes = df['bbox']
 
@@ -30,13 +27,12 @@ class LicensePlateDataset(Dataset):
         Returns:
             dict: Dictionary of image, bbox, plate text
         """       
-        image = Image.open(paths[idx])
+        image = np.array(Image.open(os.path.join(self.root,self.paths[idx]+'.jpg')))
         image = torch.as_tensor(image.reshape(3,448,448), dtype = torch.float32)
 
-        bbox = self.bboxes[idx]
+        bbox = torch.tensor(self.bboxes[idx], dtype = torch.float32)
 
         return {'image': image, 'bbox': bbox}
 
     def __len__(self,):
         return len(self.paths)
-
