@@ -7,7 +7,6 @@ def generate_dataframe(root):
         boxes = []
         paths =[]
         texts = []
-        root = r"C:\Users\win10\Documents\images"
         for file in os.listdir(root):
             if(file[-3:]=='jpg'):
                 paths.append(root+'\\'+file[:-4])
@@ -15,7 +14,7 @@ def generate_dataframe(root):
         for path in tqdm(paths):
             with open(path+'.txt',"r") as txt:
                 lst = txt.readlines()
-                image_paths.append(path[32:])
+                image_paths.append(path.rsplit('\\')[-1])
                 boxes.append(list(int(x) for x in lst[0].rsplit(" ")))
                 texts.append(list(int(x) for x in lst[1].rsplit(" ")))
 
