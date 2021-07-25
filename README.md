@@ -8,4 +8,7 @@
 
 ### Further changes with respect to model architecture and adding an OCR architecture for License plate text recognition have to be made.
 
-#### Documentation in the code and the readme will be updated as the project is in progress..
+![Testing on set](Figure_1.png)
+
+#### Documentation in the code and the readme will be updated as the project is in progress.
+
