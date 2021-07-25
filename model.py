@@ -8,7 +8,7 @@ class Regressor(nn.Module):
         super(Regressor,self).__init__()
         self.base = nn.Sequential(*list(base_model.children())[:-1])
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(in_features=960, out_features=4)
+        self.fc = nn.Linear(in_features=576, out_features=4)
         
     def forward(self,x):
         x = self.base(x)
