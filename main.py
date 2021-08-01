@@ -59,6 +59,7 @@ for epoch in range(epochs):
         feature, label = batch['image'].to(device), batch['bbox'].to(device)
         optimizer.zero_grad()
         output = model(feature).squeeze()
+        print(output.shape, label.shape)
         loss = loss_fn(output, label)
         loss.backward()
         optimizer.step()
