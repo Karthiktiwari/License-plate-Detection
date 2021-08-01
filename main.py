@@ -26,8 +26,8 @@ print(len(train_df), len(validation_df))
 train_data = LicensePlateDataset(root=data_dir, df=train_df)
 validation_data = LicensePlateDataset(root=data_dir, df=validation_df)
 
-train_data.show_examples()
-os._exit(0)
+# train_data.show_examples()
+# os._exit(0)
 trainset = DataLoader(train_data, batch_size=8, shuffle=True, num_workers=0)
 valset = DataLoader(validation_data, batch_size=8, shuffle=True, num_workers=0)
 
@@ -37,9 +37,8 @@ base_model = torchvision.models.mobilenet_v3_small(pretrained=True)
 for param in base_model.parameters():
     param.required_grad = True
 
-# base_model = nn.Sequential(*list(base_model.children())[:-1])
-# print(base_model(torch.rand(1, 3, 256, 448)).shape)
-# os._exit(0)
+base_model = nn.Sequential(*list(base_model.children())[:-1])
+print(base_model(torch.rand(1, 3, 512, 512)).shape)
 
 model = Regressor(base_model=base_model)
 

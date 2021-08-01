@@ -101,7 +101,7 @@ def generate_data(save_dir, paths, indices, ann, vb):
                 with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
                     txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
                     txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
-                    txtfile.write(" ".join(indices[i]))
+                    # txtfile.write(" ".join(indices[i]))
                     ctr += 1
         except:
             # itr = 0

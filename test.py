@@ -29,6 +29,7 @@ rows = 4
 for idx,i in enumerate(test_indices):
 	box = model(validation_data[i]['image'].unsqueeze(dim = 0).cuda()).cpu()
 	box = box[0]
+	vbox = [int(i) for i in box[1]]
 	image = np.array((Image.open(os.path.join(data_dir,validation_df['paths'][i]+'.jpg'))))
 	fig.add_subplot(rows, columns,idx+1)
 	x1 = int(box[0])
@@ -36,8 +37,10 @@ for idx,i in enumerate(test_indices):
 	x2 = int(box[0] + box[2])
 	y2 = int(box[1] + box[3])
 	p1,p2 = (x1,y1), (x2,y2)
+	vp1, vp2 = (vbox[0], vbox[1]) , (vbox[0]+vbox[2], vbox[1]+vbox[3])
 	out = cv2.rectangle(image, p1, p2, color = (255,0,0), thickness = 2)
+	fout = cv2.rectangle(out, vp1, vp2, color = (255,255,0), thickness = 2)
 	plt.axis('off')
-	plt.imshow(out)
+	plt.imshow(fout)
 
 plt.show()
