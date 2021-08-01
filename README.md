@@ -7,7 +7,7 @@
 
 ![Generated Dataset](picture_of_generated_dataset.png)
 
-### Dataset used is the UFPR - ALPR License plate dataset. (Dataset is not present in the repo)
+### Dataset used is the UFPR - ALPR dataset. (Dataset is not present in the repo)
 
 ### Further changes with respect to model architecture and adding an OCR architecture for License plate text recognition have to be made.
 
