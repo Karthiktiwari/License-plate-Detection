@@ -6,6 +6,7 @@ def generate_dataframe(root):
         image_paths = []
         boxes = []
         paths =[]
+        vboxes = []
         texts = []
         for file in os.listdir(root):
             if(file[-3:]=='jpg'):
@@ -16,8 +17,9 @@ def generate_dataframe(root):
                 lst = txt.readlines()
                 image_paths.append(path.rsplit('\\')[-1])
                 boxes.append(list(int(x) for x in lst[0].rsplit(" ")))
-                texts.append(list(int(x) for x in lst[1].rsplit(" ")))
+                vboxes.append(list(int(x) for x in lst[1].rsplit(" ")))
+                texts.append(list(int(x) for x in lst[2].rsplit(" ")))
 
-        df = pd.DataFrame({'paths': image_paths, 'bbox': boxes, 'texts':texts})
+        df = pd.DataFrame({'paths': image_paths, 'bbox': boxes, 'vbox': vboxes, 'texts':texts})
 
         return df

@@ -22,17 +22,12 @@ validation_df = df[int(pct * len(df)):]
 # df.to_csv('dataset.csv')
 train_df.index = [i for i in range(len(train_df))]
 validation_df.index = [i for i in range(len(validation_df))]
-# df = pd.read_csv('dataset.csv')
-# print(df.head())
-# print(train_df.tail(3))
-# print(validation_df.tail(3))
 print(len(train_df), len(validation_df))
-# os._exit(0)
 train_data = LicensePlateDataset(root=data_dir, df=train_df)
 validation_data = LicensePlateDataset(root=data_dir, df=validation_df)
 
-# data.show_examples()
-# print(data[0]['text'])
+train_data.show_examples()
+os._exit(0)
 trainset = DataLoader(train_data, batch_size=8, shuffle=True, num_workers=0)
 valset = DataLoader(validation_data, batch_size=8, shuffle=True, num_workers=0)
 
