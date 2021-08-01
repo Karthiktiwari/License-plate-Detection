@@ -37,8 +37,8 @@ base_model = torchvision.models.mobilenet_v3_small(pretrained=True)
 for param in base_model.parameters():
     param.required_grad = True
 
-base_model = nn.Sequential(*list(base_model.children())[:-1])
-print(base_model(torch.rand(1, 3, 512, 512)).shape)
+# base_model = nn.Sequential(*list(base_model.children())[:-1])
+# print(base_model(torch.rand(1, 3, 512, 512)).shape)
 
 model = Regressor(base_model=base_model)
 
@@ -59,7 +59,6 @@ for epoch in range(epochs):
         feature, label = batch['image'].to(device), batch['bbox'].to(device)
         optimizer.zero_grad()
         output = model(feature).squeeze()
-        print(output.shape, label.shape)
         loss = loss_fn(output, label)
         loss.backward()
         optimizer.step()
