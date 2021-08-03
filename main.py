@@ -46,7 +46,7 @@ model.to(device)
 print(model.fc)
 
 optimizer = optim.Adam(model.parameters(), lr=0.01)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.6)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.7)
 loss_fn = nn.MSELoss()
 epochs = 50
 for epoch in range(epochs):

@@ -31,7 +31,7 @@ class LicensePlateDataset(Dataset):
         Returns:
             dict: Dictionary of image, bbox, plate text
         """       
-        image = np.array(Image.open(os.path.join(self.root,str(self.paths[idx])+'.jpg'))) / 255
+        image = np.array(Image.open(os.path.join(self.root,str(self.paths[idx])+'.jpg')))
         image = torch.as_tensor(image.reshape(3,512,512), dtype = torch.float32)
 
         bbox = torch.tensor([self.bboxes[idx], self.vboxes[idx]], dtype = torch.float32)
