@@ -28,8 +28,8 @@ validation_data = LicensePlateDataset(root=data_dir, df=validation_df)
 
 # train_data.show_examples()
 # os._exit(0)
-trainset = DataLoader(train_data, batch_size=8, shuffle=True, num_workers=0)
-valset = DataLoader(validation_data, batch_size=8, shuffle=True, num_workers=0)
+trainset = DataLoader(train_data, batch_size=16, shuffle=True, num_workers=0)
+valset = DataLoader(validation_data, batch_size=16, shuffle=True, num_workers=0)
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -45,8 +45,8 @@ model = Regressor(base_model=base_model)
 model.to(device)
 print(model.fc)
 
-optimizer = optim.Adam(model.parameters(), lr=0.01)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.7)
+optimizer = optim.Adam(model.parameters(), lr=3e-2)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.9)
 loss_fn = nn.MSELoss()
 epochs = 50
 for epoch in range(epochs):

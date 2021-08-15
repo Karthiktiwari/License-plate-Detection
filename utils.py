@@ -21,5 +21,6 @@ def generate_dataframe(root):
                 texts.append(list(int(x) for x in lst[2].rsplit(" ")))
 
         df = pd.DataFrame({'paths': image_paths, 'bbox': boxes, 'vbox': vboxes, 'texts':texts})
-
+        df.sample(frac = 1, random_state=42)
+        df.reset_index(inplace=True)
         return df
