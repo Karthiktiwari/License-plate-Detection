@@ -27,21 +27,19 @@ fig = plt.figure(figsize=(20, 20))
 columns = 2
 rows = 3
 for idx,i in enumerate(test_indices):
-	box = model(validation_data[i]['image'].unsqueeze(dim = 0).cuda()).cpu()
-	box = box.detach().numpy()[0]
+	box = model(validation_data[i]['image'].unsqueeze(dim = 0).cuda())
 	# os._exit(0)
-	vbox = box[4:]
-	box = box[:4]
-	print(vbox, box)
+	vbox = box[0].cpu().detach().numpy()[0]
+	box = box[1].cpu().detach().numpy()[0]
 	image = np.array((Image.open(os.path.join(data_dir,validation_df['paths'][i]+'.jpg'))))
 	fig.add_subplot(rows, columns,idx+1)
 	x1 = int(box[0])
 	y1 = int(box[1])
-	x2 = int(box[2])
-	y2 = int(box[3])
+	x2 = x1 + int(box[2])
+	y2 = y1 + int(box[3])
 	p1,p2 = (x1,y1), (x2,y2)
-	vp1, vp2 = (int(vbox[0]), int(vbox[1])) , (int(vbox[2]), int(vbox[3]))
-	out = cv2.rectangle(image, p1, p2, color = (255,0,0), thickness = 2)
+	vp1, vp2 = (int(vbox[0]), int(vbox[1])) , (int(vbox[2]+vbox[0]), int(vbox[3]+vbox[1]))
+	out = cv2.rectangle(image, p1, p2, color = (255,255,0), thickness = 2)
 	fout = cv2.rectangle(out, vp1, vp2, color = (255,255,0), thickness = 2)
 	plt.axis('off')
 	plt.imshow(fout)

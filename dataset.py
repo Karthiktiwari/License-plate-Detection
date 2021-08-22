@@ -35,11 +35,12 @@ class LicensePlateDataset(Dataset):
         image = torch.as_tensor(image.reshape(3,512,512), dtype = torch.float32)
         lbox = self.bboxes[idx]
         vbox = self.vboxes[idx]
-        lbox = [lbox[0], lbox[1], lbox[0]+lbox[2], lbox[1]+lbox[3]]
-        vbox = [vbox[0], vbox[1], vbox[0]+vbox[2], vbox[1]+vbox[3]]
-        bbox = torch.tensor([lbox, vbox], dtype = torch.float32)
+        lbox = [lbox[0], lbox[1], lbox[2], lbox[3]]
+        vbox = [vbox[0], vbox[1], vbox[2], vbox[3]]
+        # bbox = torch.tensor([lbox, vbox], dtype = torch.float32)
+        bbox = (torch.tensor(lbox, dtype = torch.float32),torch.tensor(vbox, dtype = torch.float32))
 
-        return {'image': image, 'bbox': bbox.reshape(8)}
+        return {'image': image, 'bbox': bbox}
 
     def __len__(self,):
         return len(self.paths)
