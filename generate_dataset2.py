@@ -59,7 +59,7 @@ def read_dir(root):
 
     return paths, indices, ann, vbox
 
-def crop_transfrom(carbox, ann, img, extra_dim = 30):
+def crop_transfrom(carbox, ann, img, extra_dim = 0):
     """Crop the original image and transform the bounding box coordinates respectively
     """
     carx, cary, carw, carh = carbox
@@ -68,8 +68,8 @@ def crop_transfrom(carbox, ann, img, extra_dim = 30):
     x = int(ann[0])
     y = int(ann[1])
     relx, rely = (x-carx), (y-cary)
-    rem_w = 512-carw
-    rem_h = 512-carh
+    rem_w = 448-carw
+    rem_h = 448-carh
     dim_x1 = random.randint(extra_dim,rem_w-extra_dim)
     dim_x2 = rem_w-dim_x1
     dim_y1 = random.randint(extra_dim,rem_h-extra_dim)
@@ -96,14 +96,29 @@ def generate_data(save_dir, paths, indices, ann, vb):
         try:
             img = cv2.imread(paths[i]).copy()
             cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img)
-            if(cropped_img.shape[0]>=500 and cropped_img.shape[1]>=500):
-                cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (512,512)))
+            if(cropped_img.shape[0]>=440 and cropped_img.shape[1]>=440):
+                cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (448,448)))
                 with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
                     txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
                     txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
                     # txtfile.write(" ".join(indices[i]))
                     ctr += 1
         except:
+            img = cv2.imread(paths[i]).copy()
+            tries = 0
+            while(cropped_img.shape[0]<=440 and cropped_img.shape[1]<=440):
+                if(tries>50):
+                    break
+                cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img)
+                tries+=1
+            if(tries<=50):
+                cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (448,448)))
+                with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
+                    txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
+                    txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
+                    ctr += 1
+            else:
+                continue
             # itr = 0
             # while (itr<=200 and (ym-dim_y1<0 or ym+dim_y2<0 or xm-dim_x1<0 or xm+dim_x2<0)):
             #     dim_x1 = random.randint(20,rem_w-20)
@@ -119,7 +134,7 @@ def generate_data(save_dir, paths, indices, ann, vb):
             #     with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
             #         txtfile.write(str(dim_x1+int(w))+" "+str(dim_y1+int(h))+" "+str(w)+" "+str(h)+'\n')
             #         txtfile.write(" ".join(indices[i]))
-            continue
+            # continue
 
     print(f"{ctr} examples generated ")
 
