@@ -4,21 +4,24 @@ import torch.nn.functional as F
 
 
 class Regressor(nn.Module):
-    def __init__(self, base_model):
+    def __init__(self, base_model, S, C, img_size = 768):
         super(Regressor,self).__init__()
 
+        self.S = S
+        self.C = C
+        self.img_size = img_size
         self.base = nn.Sequential(*list(base_model.children())[:-1])
 
-        self.in_features = self.base(torch.rand(1, 3, 512, 512)).shape[1] #Output shape of fc of base model
+        self.in_features = self.base(torch.rand(1, 3, self.img_size, self.img_size)).shape[1] #Output shape of fc of base model
 
         self.flatten = nn.Flatten()
-        self.vehicle_box_regressor = nn.Linear(in_features=self.in_features, out_features=4)
-        self.plate_box_regressor = nn.Linear(in_features = self.in_features, out_features=4)
+        self.fc1 = nn.Linear(in_features = self.in_features, out_features = 1024)
+        self.fc2 = nn.Linear(in_features= 1024, out_features = (self.S*self.S*(self.C+5)))
         
     def forward(self,x):
         x = self.base(x)
         x = self.flatten(x)
-        vehicle_box = F.relu(self.vehicle_box_regressor(x))
-        plate_box = F.relu(self.plate_box_regressor(x)) 
-        return vehicle_box, plate_box
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return x.reshape(-1, self.S, self.S, self.C+5)
 

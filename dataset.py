@@ -5,13 +5,14 @@ import numpy as np
 import pandas as pd
 import os
 import random
-import cv2
 import matplotlib.pyplot as plt
+import math
+import cv2
 
-class LicensePlateDataset(Dataset):
+class ALPRDataset(Dataset):
     """Cropped Images with Transformed annotations and Plate text"""
 
-    def __init__(self, root, df, transform = None):
+    def __init__(self, root, df, S, C, transform = None):
         """
         Args:
             root (str): Path of directory
@@ -19,6 +20,9 @@ class LicensePlateDataset(Dataset):
         """
         self.df = df 
         self.root = root
+        self.image_dir = os.path.join(root, 'images')
+        self.S = S
+        self.C = C
         self.paths = df['paths']
         self.bboxes = df['bbox']
         self.vboxes = df['vbox']
@@ -31,16 +35,19 @@ class LicensePlateDataset(Dataset):
         Returns:
             dict: Dictionary of image, bbox, plate text
         """       
-        image = np.array(Image.open(os.path.join(self.root,str(self.paths[idx])+'.jpg')))
-        image = torch.as_tensor(image.reshape(3,512,512), dtype = torch.float32)
+        image = np.array(Image.open(os.path.join(self.image_dir,str(self.paths[idx])+'.jpg')))
+        image = torch.as_tensor(image, dtype = torch.float32)
         lbox = self.bboxes[idx]
         vbox = self.vboxes[idx]
         lbox = [lbox[0], lbox[1], lbox[2], lbox[3]]
         vbox = [vbox[0], vbox[1], vbox[2], vbox[3]]
-        # bbox = torch.tensor([lbox, vbox], dtype = torch.float32)
-        bbox = (torch.tensor(lbox, dtype = torch.float32),torch.tensor(vbox, dtype = torch.float32))
+        bbox = np.zeros((self.S, self.S, self.C + 5))
 
-        return {'image': image, 'bbox': bbox}
+        d = image.shape[1] / self.S
+        bbox[math.floor(lbox[0]/d)][math.floor(lbox[1]/d)] = [0, 1, 1, lbox[0], lbox[1], lbox[2], lbox[3]]
+        bbox[math.floor(vbox[0]/d)][math.floor(vbox[1]/d)] = [1, 0, 1, vbox[0], vbox[1], vbox[2], vbox[3]]
+
+        return {'image': image.reshape(3, 768, 768), 'bbox': torch.as_tensor(bbox, dtype = torch.float32)}
 
     def __len__(self,):
         return len(self.paths)

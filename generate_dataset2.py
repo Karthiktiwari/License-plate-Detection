@@ -59,7 +59,7 @@ def read_dir(root):
 
     return paths, indices, ann, vbox
 
-def crop_transfrom(carbox, ann, img, extra_dim = 0):
+def crop_transfrom(carbox, ann, img, extra_dim = 0, dim = 448):
     """Crop the original image and transform the bounding box coordinates respectively
     """
     carx, cary, carw, carh = carbox
@@ -68,8 +68,8 @@ def crop_transfrom(carbox, ann, img, extra_dim = 0):
     x = int(ann[0])
     y = int(ann[1])
     relx, rely = (x-carx), (y-cary)
-    rem_w = 448-carw
-    rem_h = 448-carh
+    rem_w = dim-carw
+    rem_h = dim-carh
     dim_x1 = random.randint(extra_dim,rem_w-extra_dim)
     dim_x2 = rem_w-dim_x1
     dim_y1 = random.randint(extra_dim,rem_h-extra_dim)
@@ -92,54 +92,43 @@ def generate_data(save_dir, paths, indices, ann, vb):
     """
     from tqdm import trange
     ctr = 0
+    dim = 768
+    image_dir = os.path.join(save_dir, 'images')
+    labels_dir = os.path.join(save_dir, 'annotations')
     for i in trange(len(ann)):
         try:
             img = cv2.imread(paths[i]).copy()
-            cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img)
-            if(cropped_img.shape[0]>=440 and cropped_img.shape[1]>=440):
-                cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (448,448)))
-                with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
+            cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img, dim=dim)
+            if(dim-cropped_img.shape[0]<=10 and dim-cropped_img.shape[1]<=10):
+                cv2.imwrite(image_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (dim,dim)))
+                with open(labels_dir+'\\'+str(i)+".txt","w") as txtfile:
                     txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
                     txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
-                    # txtfile.write(" ".join(indices[i]))
                     ctr += 1
         except:
             img = cv2.imread(paths[i]).copy()
             tries = 0
-            while(cropped_img.shape[0]<=440 and cropped_img.shape[1]<=440):
-                if(tries>50):
-                    break
-                cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img)
-                tries+=1
-            if(tries<=50):
-                cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (448,448)))
-                with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
-                    txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
-                    txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
-                    ctr += 1
-            else:
-                continue
-            # itr = 0
-            # while (itr<=200 and (ym-dim_y1<0 or ym+dim_y2<0 or xm-dim_x1<0 or xm+dim_x2<0)):
-            #     dim_x1 = random.randint(20,rem_w-20)
-            #     dim_x2 = rem_w-dim_x1
-            #     dim_y1 = random.randint(20,rem_h-20)
-            #     dim_y2 = rem_h-dim_y1
-            #     itr += 1
-            # if(itr<51):
-            #     img = cv2.imread(paths[i])
-            #     img = img[ym-dim_y1-int(h/2):ym+dim_y2+int(h/2),xm-dim_x1-int(w/2):xm+dim_x2+int(w/2),:]
-            #     cv2.imwrite(save_dir+'\\'+str(i)+'.jpg',cv2.resize( img, (448,448)))
-            #     cann.append([dim_x1,dim_y1,w,h])
-            #     with open(save_dir+'\\'+str(i)+".txt","w") as txtfile:
-            #         txtfile.write(str(dim_x1+int(w))+" "+str(dim_y1+int(h))+" "+str(w)+" "+str(h)+'\n')
-            #         txtfile.write(" ".join(indices[i]))
-            # continue
+            try:
+                while(dim-cropped_img.shape[0]>=10 and dim-cropped_img.shape[1]>=10):
+                    if(tries>50):
+                        break
+                    cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img, dim=dim)
+                    tries+=1
+                if(tries<50):
+                    cv2.imwrite(image_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (dim,dim)))
+                    with open(labels_dir+'\\'+str(i)+".txt","w") as txtfile:
+                        txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
+                        txtfile.write(" ".join([str(c) for c in transformed_vb])+'\n')
+                        ctr += 1
+                else:
+                    continue
+            except:
+                print(dim - cropped_img.shape[0], dim - cropped_img.shape[1])
 
     print(f"{ctr} examples generated ")
 
 root = r"C:\Users\win10\Downloads\UFPR-ALPR\UFPR-ALPR dataset\Train data"
-savedir = r"C:\Users\win10\Documents\images" 
+savedir = r"C:\Users\win10\Documents\UFPR-ALPR" 
 
 paths, indices, ann, vb = read_dir(root = root)         #Read raw data
 generate_data(save_dir = savedir, paths = paths, indices = indices, ann = ann, vb = vb)       #Generate cropped images, transformed annotations and vectorized plate text
