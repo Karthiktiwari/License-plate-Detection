@@ -9,7 +9,7 @@
 
 ### Dataset used is the UFPR - ALPR dataset. (Dataset is not present in the repo)
 
-### Implementing a YOLO like architecture. Loss class to be implemented
+### Implementing a YOLO like architecture. Model with best metrics in model directory.
 
 <!-- ![Testing on set](Figure_1.png) -->
 
