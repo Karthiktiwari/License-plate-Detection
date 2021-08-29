@@ -5,7 +5,7 @@
 ### Run the generate_dataset.py to generate cropped images with respective transformations
 ### The code crops the original 1980 x 1080 into 512x512 images and transforms the annotations for the same.
 
-![Generated Dataset](picture_of_generated_dataset.png)
+![Generated Dataset](images/picture_of_generated_dataset.png)
 
 ### Dataset used is the UFPR - ALPR dataset. (Dataset is not present in the repo)
 

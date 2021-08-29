@@ -99,7 +99,7 @@ def generate_data(save_dir, paths, indices, ann, vb):
         try:
             img = cv2.imread(paths[i]).copy()
             cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img, dim=dim)
-            if(dim-cropped_img.shape[0]<=10 and dim-cropped_img.shape[1]<=10):
+            if cropped_img is not None:
                 cv2.imwrite(image_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (dim,dim)))
                 with open(labels_dir+'\\'+str(i)+".txt","w") as txtfile:
                     txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
@@ -109,12 +109,12 @@ def generate_data(save_dir, paths, indices, ann, vb):
             img = cv2.imread(paths[i]).copy()
             tries = 0
             try:
-                while(dim-cropped_img.shape[0]>=10 and dim-cropped_img.shape[1]>=10):
+                while cropped_img is None:
                     if(tries>50):
                         break
                     cropped_img, transformed_ann, transformed_vb = crop_transfrom(vb[i], ann[i], img, dim=dim)
                     tries+=1
-                if(tries<50):
+                if(tries<40):
                     cv2.imwrite(image_dir+'\\'+str(i)+'.jpg',cv2.resize(cropped_img, (dim,dim)))
                     with open(labels_dir+'\\'+str(i)+".txt","w") as txtfile:
                         txtfile.write(" ".join([str(c) for c in transformed_ann])+'\n')
@@ -123,7 +123,8 @@ def generate_data(save_dir, paths, indices, ann, vb):
                 else:
                     continue
             except:
-                print(dim - cropped_img.shape[0], dim - cropped_img.shape[1])
+                # print(dim - cropped_img.shape[0], dim - cropped_img.shape[1])
+                continue
 
     print(f"{ctr} examples generated ")
 

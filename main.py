@@ -51,7 +51,7 @@ model = Regressor(base_model=base_model, S = GRID_SIZE, C = NUM_OF_CLASSES, img_
 
 model.to(device)
 
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+optimizer = optim.Adam(model.parameters(), lr=1e-2)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.7)
 loss_fn = nn.MSELoss()
 epochs = 50
@@ -81,12 +81,11 @@ for epoch in range(epochs):
     scheduler.step()
     print(f"Train loss on epoch {epoch + 1}={total_train_loss/len(trainset)}")
     print(f"Val loss on epoch {epoch + 1}={total_val_loss / len(valset)}")
-    torch.save(model, 'regressor.pt')
     # writer.add_scalar('Loss/train', total_train_loss/len(trainset), epoch)
     # writer.add_scalar('Loss/test', total_val_loss / len(valset), epoch)
 # writer.flush()
 print("Training complete")
-torch.save(model, 'regressor.pt')
+torch.save(model, 'YOLO.pt')
 
 
 
